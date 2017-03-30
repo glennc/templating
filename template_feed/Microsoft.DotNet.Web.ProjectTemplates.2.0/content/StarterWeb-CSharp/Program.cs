@@ -12,13 +12,29 @@ namespace Company.WebApplication1
         public static void Main(string[] args)
         {
             var host = new WebHostBuilder()
-                .UseKestrel()
                 .UseContentRoot(Directory.GetCurrentDirectory())
-                .UseIISIntegration()
-                .UseStartup<Startup>()
-#if (IncludeApplicationInsights)
-                .UseApplicationInsights()
+                .UseConfiguration((configBuilder, env) => {
+#if (IndividualAuth)
+                    configBuilder.AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+                    .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true);
+
+                    if (env.IsDevelopment())
+                    {
+                        // For more details on using the user secret store see https://go.microsoft.com/fwlink/?LinkID=532709
+                        builder.AddUserSecrets<Startup>();
+                    }
+
+                    configBuilder.AddEnvironmentVariables();
+#else
+                    configBuilder.AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+                    .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true)
+                    .AddEnvironmentVariables();
 #endif
+                })
+                .ConfigureLogging(loggerFactory => loggerFactory
+                    .AddConsole()
+                    .AddDebug())
+                .UseStartup<Startup>()
                 .Build();
 
             host.Run();

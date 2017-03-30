@@ -13,13 +13,15 @@ namespace Company.WebApplication1
         public static void Main(string[] args)
         {
             var host = new WebHostBuilder()
-                .UseKestrel()
                 .UseContentRoot(Directory.GetCurrentDirectory())
-                .UseIISIntegration()
+                .UseConfiguration((configBuilder, env) => configBuilder
+                    .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+                    .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true)
+                    .AddEnvironmentVariables())
+                .ConfigureLogging(loggerFactory => loggerFactory
+                    .AddConsole()
+                    .AddDebug())
                 .UseStartup<Startup>()
-#if (IncludeApplicationInsights)
-                .UseApplicationInsights()
-#endif
                 .Build();
 
             host.Run();
