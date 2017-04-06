@@ -4,6 +4,8 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 
 namespace Company.WebApplication1
 {
@@ -13,12 +15,12 @@ namespace Company.WebApplication1
         {
             var host = new WebHostBuilder()
                 .UseContentRoot(Directory.GetCurrentDirectory())
-                .UseConfiguration((configBuilder, env) => {
+                .UseConfiguration((context, configBuilder) => {
 #if (IndividualAuth)
                     configBuilder.AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
-                    .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true);
+                    .AddJsonFile($"appsettings.{context.HostingEnvironment.EnvironmentName}.json", optional: true);
 
-                    if (env.IsDevelopment())
+                    if (context.HostingEnvironment.IsDevelopment())
                     {
                         // For more details on using the user secret store see https://go.microsoft.com/fwlink/?LinkID=532709
                         builder.AddUserSecrets<Startup>();
@@ -27,7 +29,7 @@ namespace Company.WebApplication1
                     configBuilder.AddEnvironmentVariables();
 #else
                     configBuilder.AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
-                    .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true)
+                    .AddJsonFile($"appsettings.{context.HostingEnvironment.EnvironmentName}.json", optional: true)
                     .AddEnvironmentVariables();
 #endif
                 })

@@ -14,9 +14,9 @@ namespace Company.WebApplication1
         {
             var host = new WebHostBuilder()
                 .UseContentRoot(Directory.GetCurrentDirectory())
-                .UseConfiguration((configBuilder, env) => configBuilder
+                .UseConfiguration((context, configBuilder) => configBuilder
                     .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
-                    .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true)
+                    .AddJsonFile($"appsettings.{context.HostingEnvironment.EnvironmentName}.json", optional: true)
                     .AddEnvironmentVariables())
                 .ConfigureLogging(loggerFactory => loggerFactory
                     .AddConsole()
