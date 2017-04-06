@@ -13,6 +13,7 @@ namespace Company.WebApplication1
         public static void Main(string[] args)
         {
             var host = new WebHostBuilder()
+                .UseKestrel()
                 .UseContentRoot(Directory.GetCurrentDirectory())
                 .ConfigureLogging(loggerFactory => loggerFactory.AddConsole())
                 .UseStartup<Startup>()

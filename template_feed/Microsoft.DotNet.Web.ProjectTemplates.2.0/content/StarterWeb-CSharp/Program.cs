@@ -15,7 +15,7 @@ namespace Company.WebApplication1
         {
             var host = new WebHostBuilder()
                 .UseContentRoot(Directory.GetCurrentDirectory())
-                .UseConfiguration((context, configBuilder) => {
+                .ConfigureConfiguration((context, configBuilder) => {
 #if (IndividualAuth)
                     configBuilder.AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
                     .AddJsonFile($"appsettings.{context.HostingEnvironment.EnvironmentName}.json", optional: true);
